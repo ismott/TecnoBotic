@@ -54,6 +54,12 @@ bool detectaPretoB = false;
 #define pinSen1 A3
 #define pinSen2 A2
 #define pinSen3 A1
+int valorSensor1;
+int valorSensor2;
+int valorSensor3;
+
+int pretoInfra;
+int brancoInfra;
 
 //Definicoes sensor ultrassonico
 #include <HCSR04.h>
@@ -75,12 +81,182 @@ void setup() {
   pinMode(motor4A, OUTPUT);
   pinMode(motor4B, OUTPUT);
 
-  
+  //setup sensor de cor
+  pinMode(S0A, OUTPUT);
+  pinMode(S1A, OUTPUT);
+  pinMode(S2A, OUTPUT);
+  pinMode(S3A, OUTPUT);
+  pinMode(outA, INPUT);
+  pinMode(LED, OUTPUT);
+
+  pinMode(S0B, OUTPUT);
+  pinMode(S1B, OUTPUT);
+  pinMode(S2B, OUTPUT);
+  pinMode(S3B, OUTPUT);
+  pinMode(outB, INPUT);
+
+  digitalWrite(S0A, HIGH);
+  digitalWrite(S1A, LOW);
+
+  digitalWrite(S0B, HIGH);
+  digitalWrite(S1B, LOW);
+
+  //sensorInfraVermelho:
+  pinMode(pinSen1, INPUT);
+  pinMode(pinSen2, INPUT);
+  pinMode(pinSen3, INPUT);
+  detectarBranco();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  detectaCor();
+  atualizaSensores();
+  medirDist();
+  Serial.println(valorSensor1);
+  Serial.println(valorSensor2);
+  Serial.println(valorSensor3);
+  /*if ((valorSensor1 > brancoInfra) || (valorSensor2 <= brancoInfra) || (valorSensor3 > brancoInfra)
+      || (detectaVerdeA == true) || (detectaVerdeB) || (detectaPretoA == true) || (detectaPretoB == true)
+     ) {
+    if ((detectaPretoA == true) || (detectaPretoB == true)) {
+      if (detectaPretoA == true) {
+        atualizaSensores();
+        while (valorSensor2 < brancoInfra) {
+          atualizaSensores();
+          irPraEsquerda();
+        }
+      } else {
+        atualizaSensores();
+        while (valorSensor2 < brancoInfra) {
+          atualizaSensores();
+          irPraDireita();
+        }
+      }
+    } else if ((valorSensor1 > brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 > brancoInfra)) { //preto - preto - preto
+      while ((detectaPretoA == false) && (detectaPretoB == false)) {
+        atualizaSensores();
+        if ((detectaVerdeA == true) || (detectaVerdeB == true)) {
+          detectaPretoA = true;
+          detectaPretoB = true;
+          if ((detectaVerdeA == true) && (detectaVerdeB == true)) {
+            darMeiaVolta();
+            delay(800);
+            while (valorSensor2 < brancoInfra) {
+              atualizaSensores();
+              darMeiaVolta();
+            }
+          } else if (detectaVerdeA == true) {
+            atualizaSensores();
+            irEmFrente();
+            delay(800);
+            if (valorSensor2 > brancoInfra) {
+              while (valorSensor3 <= brancoInfra) {
+                atualizaSensores();
+                irPraEsquerda();
+              }
+              irPraEsquerda();
+              delay(400);
+              while (valorSensor2 <= brancoInfra) {
+                atualizaSensores();
+                irPraEsquerda();
+              }
+            } else {
+              while (valorSensor2 <= brancoInfra) {
+                atualizaSensores();
+                irPraEsquerda();
+              }
+            }
+          } else {
+            atualizaSensores();
+            if (valorSensor2 > brancoInfra) {
+              while (valorSensor1 <= brancoInfra) {
+                atualizaSensores();
+                irPraEsquerda();
+              }
+              irPraDireita();
+              delay(400);
+              while (valorSensor2 <= brancoInfra) {
+                atualizaSensores();
+                irPraDireita();
+              }
+            } else {
+              while (valorSensor2 <= brancoInfra) {
+                atualizaSensores();
+                irPraEsquerda();
+              }
+            }
+          }
+          irEmFrente();
+        }
+      detectaPretoA = false;
+      detectaPretoB = false;
+    } else if ((valorSensor1 > brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 <= brancoInfra)) { //preto - preto - branco
+      irEmFrente();
+      delay(400);
+      irPraEsquerda();
+      delay(400);
+      while (valorSensor2 <= brancoInfra) {
+        atualizaSensores();
+        irPraEsquerda();
+      }
+    } else if ((valorSensor1 <= brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 > brancoInfra)) { // branco - preto - preto
+      irEmFrente();
+      delay(400);
+      irPraDireita();
+      delay(400);
+      while (valorSensor2 <= brancoInfra) {
+        atualizaSensores();
+        irPraDireita();
+      }
+    } else if ((valorSensor1 > brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 <= brancoInfra)) { // preto - branco - branco
+      while (valorSensor2 <= brancoInfra) {
+        atualizaSensores();
+        irPraEsquerda();
+      }
+    } else if ((valorSensor1 <= brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 > brancoInfra)) { // branco - branco - preto
+      while (valorSensor2 <= brancoInfra) {
+        atualizaSensores();
+        irPraDireita();
+      }
+    } else if ((valorSensor1 <= brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 <= brancoInfra)) { // branco - branco - branco
+      while ((valorSensor1 <= brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 <= brancoInfra) && (detectaPretoA == false) && (detectaPretoB == false)) {
+        atualizaSensores();
+        irEmFrente();
+      }
+    }
+    } else {
+    irEmFrente();
+    delay(10);
+    } */
+  
+  if ((valorSensor1 > brancoInfra) || (valorSensor2 <= brancoInfra) || (valorSensor3 > brancoInfra)
+      || (detectaVerdeA == true) || (detectaVerdeB) || (detectaPretoA == true) || (detectaPretoB == true)
+     ) {
+    if (valorSensor1 > brancoInfra) {
+      while (valorSensor2 <= brancoInfra) {
+        atualizaSensores();
+        irPraEsquerda();
+      }
+    } else if (valorSensor3 > brancoInfra) {
+      while (valorSensor2 <= brancoInfra) {
+        atualizaSensores();
+        irPraDireita();
+      }
+    }
+  } else {
+    irEmFrente();
+  }
+}
 
+void detectarPreto() {
+  pretoInfra = analogRead(pinSen2) - 50;
+  delay(700);
+}
+
+void detectarBranco() {
+  brancoInfra = (analogRead(pinSen1) + analogRead(pinSen3)) / 2 + 20;
+  delay(700);
 }
 
 void detectaCor() {
@@ -91,7 +267,7 @@ void detectaCor() {
   digitalWrite(S2B, LOW);
   digitalWrite(S3B, LOW);
   vermelhoB = pulseIn(outB, digitalRead(outB) == HIGH ? LOW : HIGH);
-  
+
   //Sem filtro
   digitalWrite(S2A, HIGH);
   brancoA = pulseIn(outA, digitalRead(outA) == HIGH ? LOW : HIGH);
@@ -113,23 +289,23 @@ void detectaCor() {
   verdeB = pulseIn(outB, digitalRead(outB) == HIGH ? LOW : HIGH);
 
   //verificação se algum sensor de cor detecta verde
-  if((verdeA >= verdeMin) && (verdeA <= verdeMax) && (azulA >= azulMin) && (azulA <= azulMax) && (vermelhoA > vermelhoMin) && (vermelhoA < vermelhoMax) && (brancoA >= brancoMin) && (brancoA <= brancoMax)){
+  if ((verdeA >= verdeMin) && (verdeA <= verdeMax) && (azulA >= azulMin) && (azulA <= azulMax) && (vermelhoA > vermelhoMin) && (vermelhoA < vermelhoMax) && (brancoA >= brancoMin) && (brancoA <= brancoMax)) {
     detectaVerdeA = true;
   } else {
     detectaVerdeA = false;
   }
-  if((verdeB >= verdeMin) && (verdeB <= verdeMax) && (azulB >= azulMin) && (azulB <= azulMax) && (vermelhoB > vermelhoMin) && (vermelhoB < vermelhoMax) && (brancoB >= brancoMin) && (brancoB <= brancoMax)){
+  if ((verdeB >= verdeMin) && (verdeB <= verdeMax) && (azulB >= azulMin) && (azulB <= azulMax) && (vermelhoB > vermelhoMin) && (vermelhoB < vermelhoMax) && (brancoB >= brancoMin) && (brancoB <= brancoMax)) {
     detectaVerdeB = true;
   } else {
     detectaVerdeB = false;
   }
   //verificação se identificam preto
-  if((vermelhoA >= 10) && (vermelhoA <= 21) && (verdeA >= 10) && (verdeA <= 21) && (azulA <= vermelhoA)){//verificação sensor A
+  if ((vermelhoA >= 10) && (vermelhoA <= 21) && (verdeA >= 10) && (verdeA <= 21) && (azulA <= vermelhoA)) { //verificação sensor A
     detectaPretoA = true;
   } else {
     detectaPretoA = false;
   }
-  if((vermelhoB >= 10) && (vermelhoB <= 21) && (verdeB >= 10) && (verdeB <= 21) && (azulB <= vermelhoB)){//verificação sensor A
+  if ((vermelhoB >= 10) && (vermelhoB <= 21) && (verdeB >= 10) && (verdeB <= 21) && (azulB <= vermelhoB)) { //verificação sensor A
     detectaPretoB = true;
   } else {
     detectaPretoB = false;
@@ -137,23 +313,23 @@ void detectaCor() {
 }
 
 
-void medirDist(){
+void medirDist() {
   dist = sensorDist.measureDistanceCm();
 }
 
-void atualizaSensores(){
+void atualizaSensores() {
   valorSensor1 = analogRead(pinSen1);
   valorSensor2 = analogRead(pinSen2);
   valorSensor3 = analogRead(pinSen3);
   detectaCor();
 }
 
-void umPoucoPraFrente(){
+void umPoucoPraFrente() {
   irEmFrente();
   delay(800);
 }
 
-void irEmFrente(){
+void irEmFrente() {
   //motores da direita:
   analogWrite(motor1A, velocidade);
   analogWrite(motor1B, 0);
@@ -166,7 +342,7 @@ void irEmFrente(){
   analogWrite(motor4B, 0);
 }
 
-void irPraEsquerda(){
+void irPraEsquerda() {
   //motores da direita:
   analogWrite(motor1A, velocidade);
   analogWrite(motor1B, 0);
@@ -174,17 +350,17 @@ void irPraEsquerda(){
   analogWrite(motor2B, 0);
   //motores da esquerda:
   analogWrite(motor3A, 0);
-  analogWrite(motor3B, 0);
+  analogWrite(motor3B, velocidade);
   analogWrite(motor4A, 0);
-  analogWrite(motor4B, 0);
+  analogWrite(motor4B, velocidade);
 }
 
-void irPraDireita(){
+void irPraDireita() {
   //motores da direita:
   analogWrite(motor1A, 0);
-  analogWrite(motor1B, 0);
+  analogWrite(motor1B, velocidade);
   analogWrite(motor2A, 0);
-  analogWrite(motor2B, 0);
+  analogWrite(motor2B, velocidade);
   //motores da esquerda:
   analogWrite(motor3A, velocidade);
   analogWrite(motor3B, 0);
@@ -192,7 +368,7 @@ void irPraDireita(){
   analogWrite(motor4B, 0);
 }
 
-void irPraTras(){
+void irPraTras() {
   //motores da direita:
   analogWrite(motor1A, 0);
   analogWrite(motor1B, velocidade);
@@ -205,7 +381,7 @@ void irPraTras(){
   analogWrite(motor4B, velocidade);
 }
 
-void darMeiaVolta(){
+void darMeiaVolta() {
   //motores da direita:
   analogWrite(motor1A, velocidade);
   analogWrite(motor1B, 0);
@@ -218,7 +394,7 @@ void darMeiaVolta(){
   analogWrite(motor4B, velocidade);
 }
 
-void parar(){
+void parar() {
   //motores da direita:
   analogWrite(motor1A, 255);
   analogWrite(motor1B, 255);
@@ -231,7 +407,7 @@ void parar(){
   analogWrite(motor4B, 255);
 }
 
-void motorLivre(){
+void motorLivre() {
   //motores da direita:
   analogWrite(motor1A, 0);
   analogWrite(motor1B, 0);
@@ -242,4 +418,4 @@ void motorLivre(){
   analogWrite(motor3B, 0);
   analogWrite(motor4A, 0);
   analogWrite(motor4B, 0);
-} 
+}
