@@ -78,6 +78,11 @@ int dist;
 #define distObstaculo *number*;
 
 void setup() {
+  //sensorInfraVermelho:
+  pinMode(pinSen1, INPUT);
+  pinMode(pinSen2, INPUT);
+  pinMode(pinSen3, INPUT);
+  
   //setup sensor de cor
   pinMode(S0A, OUTPUT);
   pinMode(S1A, OUTPUT);
@@ -94,7 +99,8 @@ void setup() {
   digitalWrite(S1A, LOW);
   digitalWrite(S0B, HIGH);
   digitalWrite(S1B, LOW);
-  
+
+  //motor
   pinMode(pinMotor1PWM, OUTPUT);
   pinMode(pinMotor2PWM, OUTPUT);
   pinMode(pinMotor3PWM, OUTPUT);
@@ -120,12 +126,12 @@ void loop() {
   if(dist <= distObstaculo){//verifica se identifica algum obstáculo
     //Desvia do obstáculo:
   } else 
-  //verifica se é pra seguir linha
+  /*//verifica se é pra seguir linha
   if((valorSensor1 <= brancoInfra) && (valorSensor2 >= pretoInfra) && (valorSensor3 <= brancoInfra) //verificação infravermelhos
     && (detectaVerdeA == false) && (detectaVerdeB == false) && (pretoA != true) && (pretoB != true) //verificação sensor de cor
   ){
     irEmFrente();
-  } else if(pretoA == true || pretoB == true){
+  }*/ if(pretoA == true || pretoB == true){
     if(pretoA == true){
       while(brancoA > 35){
         irPraDireita();
@@ -234,8 +240,7 @@ void loop() {
       delay(750);
     }
   } else {
-    motorLivre();
-    delay(1000);
+    irEmFrente();
   }
 }
 

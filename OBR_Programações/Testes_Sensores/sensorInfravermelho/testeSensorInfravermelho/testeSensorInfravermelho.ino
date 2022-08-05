@@ -1,13 +1,13 @@
-#define pinSen1 A1
+#define pinSen1 A3
 #define pinSen2 A2
-#define pinSen3 A3
+#define pinSen3 A1
 
 int valorSensor1;
 int valorSensor2;
 int valorSensor3;
 
-int pretoInfra = 0;
-int brancoInfra = 0;
+int pretoInfra;
+int brancoInfra;
 
 void setup() {
   // put your setup code here, to run once:
@@ -22,47 +22,40 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-    valorSensor1 = analogRead(pinSen1);
-  valorSensor2 = analogRead(pinSen2);
-  valorSensor3 = analogRead(pinSen3);
-  if((valorSensor1 <= brancoInfra)){
-    Serial.print("1-Branco");
-  } else if(valorSensor1 >= pretoInfra){
-    Serial.print("1-Preto");
-  } else {
-    Serial.print("1-Nada");
-  }
-  Serial.println();
-  if((valorSensor2 <= brancoInfra)){
-    Serial.print("2-Branco");
-  } else if(valorSensor2 >= pretoInfra){
-    Serial.print("2-Preto");
-  } else {
-    Serial.print("2-Nada");
-  }
-  Serial.println();
-  if((valorSensor3 <= brancoInfra)){
-    Serial.print("3-Branco");
-  } else if(valorSensor3 >= pretoInfra){
-    Serial.print("3-Preto");
-  } else {
-    Serial.print("3-Nada");
-  }
-  Serial.println();
-  delay(1200); 
-  /*Serial.println("valorSensor1:");
+  valorSensor1 = analogRead(pinSen1);
+   valorSensor2 = analogRead(pinSen2);
+    valorSensor3 = analogRead(pinSen3); 
+
   Serial.println(valorSensor1);
-  Serial.println("valorSensor2:");
   Serial.println(valorSensor2);
-  Serial.println("valorSensor3:");
   Serial.println(valorSensor3);
-  Serial.println();*/
+  delay(800);
+  
+  /*if(valorSensor1 < brancoInfra){
+    Serial.println("BRANCO");
+  } else {
+    Serial.println("PRETO");
+  }
+  if(valorSensor2 < brancoInfra){
+    Serial.println("BRANCO");
+  } else {
+    Serial.println("PRETO");
+  }
+  if(valorSensor3 < brancoInfra){
+    Serial.println("BRANCO");
+  } else {
+    Serial.println("PRETO");
+  } 
+  Serial.println();
+  delay(700);*/
 }
 
 void detectarPreto(){
-  pretoInfra = analogRead(pinSen2) - 150;
+  pretoInfra = analogRead(pinSen2) - 50;
+  delay(500);
 }
 
 void detectarBranco(){
   brancoInfra = (analogRead(pinSen1) + analogRead(pinSen3))/2 + 50;
-}
+  delay(500);
+} 
