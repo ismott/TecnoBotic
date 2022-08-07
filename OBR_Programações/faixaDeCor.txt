@@ -1,0 +1,6 @@
+No verde:
+
+Verde =  A: 65 - 75 / B: 80 - 90
+Vermelho = A: 75 - 85 / B: 95 - 105
+azul = A: 35 - 45 / B: 65 - 75
+branco = A: < 35 / B: < 35  

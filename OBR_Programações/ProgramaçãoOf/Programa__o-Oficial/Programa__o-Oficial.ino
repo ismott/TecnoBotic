@@ -9,7 +9,7 @@
 #define motor4A 5
 #define motor4B 4
 
-int velocidade = 255;
+int velocidade = 200;
 
 //definições sensor de cor
 //Sensor da esquerda:
@@ -113,139 +113,163 @@ void loop() {
   detectaCor();
   atualizaSensores();
   medirDist();
-  Serial.println(valorSensor1);
-  Serial.println(valorSensor2);
-  Serial.println(valorSensor3);
-  /*if ((valorSensor1 > brancoInfra) || (valorSensor2 <= brancoInfra) || (valorSensor3 > brancoInfra)
-      || (detectaVerdeA == true) || (detectaVerdeB) || (detectaPretoA == true) || (detectaPretoB == true)
-     ) {
-    if ((detectaPretoA == true) || (detectaPretoB == true)) {
-      if (detectaPretoA == true) {
+  valorSensor1 = analogRead(pinSen1);
+  valorSensor2 = analogRead(pinSen2);
+  valorSensor3 = analogRead(pinSen3);
+  if ((detectaPretoA == true) || (detectaPretoB == true)) {// analisa se um sensor de cor vê preto
+    if (detectaPretoA == true) {
+      while (valorSensor2 <= brancoInfra) {
         atualizaSensores();
-        while (valorSensor2 < brancoInfra) {
-          atualizaSensores();
-          irPraEsquerda();
-        }
-      } else {
-        atualizaSensores();
-        while (valorSensor2 < brancoInfra) {
-          atualizaSensores();
-          irPraDireita();
-        }
+        irPraEsquerda();
       }
-    } else if ((valorSensor1 > brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 > brancoInfra)) { //preto - preto - preto
-      while ((detectaPretoA == false) && (detectaPretoB == false)) {
+    } else {
+      while (valorSensor2 <= brancoInfra) {
         atualizaSensores();
-        if ((detectaVerdeA == true) || (detectaVerdeB == true)) {
-          detectaPretoA = true;
-          detectaPretoB = true;
-          if ((detectaVerdeA == true) && (detectaVerdeB == true)) {
-            darMeiaVolta();
-            delay(800);
-            while (valorSensor2 < brancoInfra) {
-              atualizaSensores();
-              darMeiaVolta();
-            }
-          } else if (detectaVerdeA == true) {
-            atualizaSensores();
-            irEmFrente();
-            delay(800);
-            if (valorSensor2 > brancoInfra) {
-              while (valorSensor3 <= brancoInfra) {
-                atualizaSensores();
-                irPraEsquerda();
-              }
-              irPraEsquerda();
-              delay(400);
-              while (valorSensor2 <= brancoInfra) {
-                atualizaSensores();
-                irPraEsquerda();
-              }
-            } else {
-              while (valorSensor2 <= brancoInfra) {
-                atualizaSensores();
-                irPraEsquerda();
-              }
-            }
-          } else {
-            atualizaSensores();
-            if (valorSensor2 > brancoInfra) {
-              while (valorSensor1 <= brancoInfra) {
-                atualizaSensores();
-                irPraEsquerda();
-              }
-              irPraDireita();
-              delay(400);
-              while (valorSensor2 <= brancoInfra) {
-                atualizaSensores();
-                irPraDireita();
-              }
-            } else {
-              while (valorSensor2 <= brancoInfra) {
-                atualizaSensores();
-                irPraEsquerda();
-              }
-            }
-          }
-          irEmFrente();
-        }
-      detectaPretoA = false;
-      detectaPretoB = false;
-    } else if ((valorSensor1 > brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 <= brancoInfra)) { //preto - preto - branco
+        irPraDireita();
+      }
+    }
+  }
+  if ((detectaVerdeA == true) || (detectaVerdeB == true)) { // analisa se um sensor de cor vê verde
+    atualizaSensores();
+    if ((detectaVerdeA == true) && (detectaVerdeB == true)) {
+      darMeiaVolta();
+      delay(500);
+      while (valorSensor2 <= brancoInfra) {
+        darMeiaVolta();
+        atualizaSensores();
+      }
+    } else if (detectaVerdeA == true) {
       irEmFrente();
-      delay(400);
+      delay(200);
       irPraEsquerda();
       delay(400);
       while (valorSensor2 <= brancoInfra) {
-        atualizaSensores();
         irPraEsquerda();
+        atualizaSensores();
       }
-    } else if ((valorSensor1 <= brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 > brancoInfra)) { // branco - preto - preto
+    } else {
       irEmFrente();
-      delay(400);
+      delay(200);
       irPraDireita();
       delay(400);
       while (valorSensor2 <= brancoInfra) {
-        atualizaSensores();
         irPraDireita();
-      }
-    } else if ((valorSensor1 > brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 <= brancoInfra)) { // preto - branco - branco
-      while (valorSensor2 <= brancoInfra) {
         atualizaSensores();
-        irPraEsquerda();
       }
-    } else if ((valorSensor1 <= brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 > brancoInfra)) { // branco - branco - preto
-      while (valorSensor2 <= brancoInfra) {
-        atualizaSensores();
-        irPraDireita();
-      }
-    } else if ((valorSensor1 <= brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 <= brancoInfra)) { // branco - branco - branco
-      while ((valorSensor1 <= brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 <= brancoInfra) && (detectaPretoA == false) && (detectaPretoB == false)) {
-        atualizaSensores();
+    }
+  }
+  if ((valorSensor1 > brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 <= brancoInfra)) { //Preto - branco - branco
+    while (valorSensor2 <= brancoInfra) {
+      irPraEsquerda();
+      atualizaSensores();
+    }
+  }
+  if ((valorSensor1 <= brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 > brancoInfra)) { //branco - branco - preto
+    while (valorSensor2 <= brancoInfra) {
+      irPraDireita();
+      atualizaSensores();
+    }
+  }
+  if ((valorSensor1 > brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 > brancoInfra)) { //preto - preto - preto
+    atualizaSensores();
+    while ((valorSensor1 > brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 > brancoInfra)) {
+      irEmFrente();
+      if ((detectaVerdeA == true) && (detectaVerdeB == true)) {// verificacao dos verdes
+        darMeiaVolta();
+        delay(500);
+        while (valorSensor2 <= brancoInfra) {
+          darMeiaVolta();
+          atualizaSensores();
+        }
+      } else if (detectaVerdeA == true) {
         irEmFrente();
-      }
-    }
-    } else {
-    irEmFrente();
-    delay(10);
-    } */
-  
-  if ((valorSensor1 > brancoInfra) || (valorSensor2 <= brancoInfra) || (valorSensor3 > brancoInfra)
-      || (detectaVerdeA == true) || (detectaVerdeB) || (detectaPretoA == true) || (detectaPretoB == true)
-     ) {
-    if (valorSensor1 > brancoInfra) {
-      while (valorSensor2 <= brancoInfra) {
-        atualizaSensores();
+        delay(400);
         irPraEsquerda();
-      }
-    } else if (valorSensor3 > brancoInfra) {
-      while (valorSensor2 <= brancoInfra) {
-        atualizaSensores();
+        delay(400);
+        while (valorSensor2 <= brancoInfra) {
+          irPraEsquerda();
+          atualizaSensores();
+        }
+      } else if (detectaVerdeB == true) {
+        irEmFrente();
+        delay(400);
         irPraDireita();
+        delay(400);
+        while (valorSensor2 <= brancoInfra) {
+          irPraDireita();
+          atualizaSensores();
+        }
+      }
+      atualizaSensores();
+    }
+    irEmFrente();
+    delay(500);
+  }
+  if ((valorSensor1 > brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 < brancoInfra)) { //preto - preto - branco
+    irEmFrente();
+    delay(80);
+    if(detectaVerdeA == true){
+      irEmFrente();
+      delay(200);
+      irPraEsquerda();
+      delay(400);
+      while (valorSensor2 <= brancoInfra) {
+        irPraEsquerda();
+        atualizaSensores();
       }
     }
-  } else {
+    atualizaSensores();
     irEmFrente();
+    delay(500);
+    if ((valorSensor2 <= brancoInfra) && (detectaPretoA == false) && (detectaPretoB == false)) {
+      while (valorSensor2 <= brancoInfra) {
+        irPraEsquerda();
+        atualizaSensores();
+      }
+    } else {
+      irEmFrente();
+      delay(400);
+    }
+  }
+  if ((valorSensor1 <= brancoInfra) && (valorSensor2 > brancoInfra) && (valorSensor3 > brancoInfra)) { //branco - preto - preto
+    irEmFrente();
+    delay(80);
+    if(detectaVerdeB == true){
+      irEmFrente();
+      delay(200);
+      irPraDireita();
+      delay(400);
+      while (valorSensor2 <= brancoInfra) {
+        irPraDireita();
+        atualizaSensores();
+      }
+    }
+    atualizaSensores();
+    irEmFrente();
+    delay(500);
+    if ((valorSensor2 <= brancoInfra) && (detectaPretoA == false) && (detectaPretoB == false)) {
+      while (valorSensor2 <= brancoInfra) {
+        irPraDireita();
+        atualizaSensores();
+      }
+    } else {
+      irEmFrente();
+      delay(400);
+    }
+  }
+  if((valorSensor1 <= brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 <= brancoInfra) && (detectaPretoA == false) && (detectaPretoB == false)){// branco - branco - branco
+    while((valorSensor1 <= brancoInfra) && (valorSensor2 <= brancoInfra) && (valorSensor3 <= brancoInfra) && (detectaPretoA == false) && (detectaPretoB == false)){
+      irEmFrente();
+      atualizaSensores();
+    }
+  }
+  if (valorSensor2 > brancoInfra) { //irEmFrente
+    irEmFrente();
+  } else {
+    while (valorSensor2 <= brancoInfra) {
+      darMeiaVolta();
+      atualizaSensores();
+    }
   }
 }
 
@@ -289,25 +313,41 @@ void detectaCor() {
   verdeB = pulseIn(outB, digitalRead(outB) == HIGH ? LOW : HIGH);
 
   //verificação se algum sensor de cor detecta verde
-  if ((verdeA >= verdeMin) && (verdeA <= verdeMax) && (azulA >= azulMin) && (azulA <= azulMax) && (vermelhoA > vermelhoMin) && (vermelhoA < vermelhoMax) && (brancoA >= brancoMin) && (brancoA <= brancoMax)) {
+  /* if ((verdeA >= verdeMin) && (verdeA <= verdeMax) && (azulA >= azulMin) && (azulA <= azulMax) && (vermelhoA > vermelhoMin) && (vermelhoA < vermelhoMax) && (brancoA >= brancoMin) && (brancoA <= brancoMax)) {
     detectaVerdeA = true;
-  } else {
+    } else {
     detectaVerdeA = false;
-  }
-  if ((verdeB >= verdeMin) && (verdeB <= verdeMax) && (azulB >= azulMin) && (azulB <= azulMax) && (vermelhoB > vermelhoMin) && (vermelhoB < vermelhoMax) && (brancoB >= brancoMin) && (brancoB <= brancoMax)) {
+    }
+    if ((verdeB >= verdeMin) && (verdeB <= verdeMax) && (azulB >= azulMin) && (azulB <= azulMax) && (vermelhoB > vermelhoMin) && (vermelhoB < vermelhoMax) && (brancoB >= brancoMin) && (brancoB <= brancoMax)) {
     detectaVerdeB = true;
-  } else {
+    } else {
     detectaVerdeB = false;
-  }
-  //verificação se identificam preto
-  if ((vermelhoA >= 10) && (vermelhoA <= 21) && (verdeA >= 10) && (verdeA <= 21) && (azulA <= vermelhoA)) { //verificação sensor A
+    }
+    //verificação se identificam preto
+    if ((vermelhoA >= 10) && (vermelhoA <= 21) && (verdeA >= 10) && (verdeA <= 21) && (azulA <= vermelhoA)) { //verificação sensor A
+    detectaPretoA = true;
+    } else {
+    detectaPretoA = false;
+    }
+    if ((vermelhoB >= 10) && (vermelhoB <= 21) && (verdeB >= 10) && (verdeB <= 21) && (azulB <= vermelhoB)) { //verificação sensor A
+    detectaPretoB = true;
+    } else {
+    detectaPretoB = false;
+    } */
+  if ((verdeA < vermelhoA) && (azulA < vermelhoA) && (brancoA < 35) && (brancoA > 21) && (vermelhoA > 55)  && (vermelhoA < 65) && (verdeA < 60) && (verdeA - 12 <= azulA)) {
+    detectaVerdeA = true;
+  } else if ((verdeA > 50) && (vermelhoA > 50) && (azulA > 50) && (brancoA > 30)) {
     detectaPretoA = true;
   } else {
+    detectaVerdeA = false;
     detectaPretoA = false;
   }
-  if ((vermelhoB >= 10) && (vermelhoB <= 21) && (verdeB >= 10) && (verdeB <= 21) && (azulB <= vermelhoB)) { //verificação sensor A
+  if ((verdeB < vermelhoB) && (azulB < vermelhoB) && (brancoB < 35) && (brancoB > 21) && (vermelhoB > 55)  && (vermelhoB < 65) && (verdeB < 60) && (verdeB - 12 <= azulB)) {
+    detectaVerdeB = true;
+  } else if ((verdeB > 50) && (vermelhoB > 50) && (azulB > 50) && (brancoB > 30)) {
     detectaPretoB = true;
   } else {
+    detectaVerdeB = false;
     detectaPretoB = false;
   }
 }
